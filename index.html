@@ -1,0 +1,102 @@
+<body>
+    <table id="repair-invoice">
+        <tr>
+            <th>Item</th>
+            <th>Parts</th>
+            <th>Labor</th>
+            <th>Total</th>
+        </tr>
+        <tr class="row1">
+            <td>Automatic Transmission Replacement</td>
+            <td><strong>$1,809.99</strong></td>
+            <td>$830.00</td>
+            <td>?</td>
+        </tr>
+        <tr>
+            <td>Exhaust system replace</td>
+            <td><strong>$279.99</strong></td>
+            <td><strong>$225.00</strong></td>
+            <td>?</td>
+        </tr>
+        <tr>
+            <td>Replace air filter</td>
+            <td>$9.99</td>
+            <td>$0.00</td>
+            <td>?</td>
+        </tr>
+        <tr>
+            <td colspan="3">Total</td>
+            <td>?</td>
+        </tr>
+    </table>
+
+    <script type="text/javascript">
+        // Your code here...
+        var table = document.querySelector("table");
+        var finalTotalItem = [];
+
+        window.onload = function () {
+
+            for (var i = 0, row; row = table.rows[i]; i++) {
+                var arr = [];
+                var final = [];
+                var rowTotal;
+                let finalVal;
+
+                for (var j = 0, col; col = row.cells[j]; j++) {
+
+                    //checking only $ specific value will check
+                    if (col.innerText.substring(0, 1) === '$') {
+                        // removing $ sign and saving in array
+                        arr.push(col.innerText.slice(1))
+
+                        // blank array not allowed
+                        if (arr.length > 1) {
+                            arr.map(total => {
+                                // adding segregated values and pushing to new array
+                                total = getNumericValue(total)
+                                final.push(total);
+                            })
+                        }
+
+                        // final array where blank array not allowed
+                        if (final.length > 0) {
+                            // making sum of all the array
+                            rowTotal = final.reduce((total, amount) => total + amount);
+                        }
+                    }
+
+                    // getting last td to put the value
+                    if (j === 3 && col.innerHTML === '?') {
+                        // adding value with $ sign
+                        col.innerHTML = '$' + rowTotal;
+
+                        // adding class to add sub total amount for later use
+                        col.classList.add('subTotal');
+                    }
+
+                    //getting those col whose having sub total class
+                    if (col.classList.contains('subTotal')) {
+                        // saving and pushing to new array
+                        let firstVal = parseInt(col.innerHTML.slice(1).split('.')[0]);
+                        let secondVal = parseInt(col.innerHTML.slice(1).split('.')[1]);
+                        finalVal = firstVal + parseFloat('0.' + secondVal.toString())
+                        finalTotalItem.push(finalVal)
+                    }
+
+                    if (j === 1 && col.innerHTML === '?') {
+                        // checking last div and pushing the array
+                        col.innerHTML = '$' + finalTotalItem.reduce((total, amount) => total + amount).toFixed(2);
+                        col.classList.add('total');
+                    }
+                }
+            }
+        }
+
+        function getNumericValue(val) {
+            let firstVal = parseInt(val.split('.')[0].split(',').join(''));
+            let secondVal = parseInt(val.split('.')[1]);
+            return firstVal + parseFloat('0.' + secondVal.toString())
+        }
+    </script>
+</body>
